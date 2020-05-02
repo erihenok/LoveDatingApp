@@ -56,6 +56,10 @@ class LoginViewController: UIViewController {
                     self.errorLabel.text = errorMessage
                 } else {
                 print("sign up successful")
+                    
+                    // updateSegue if the siginup is succesful
+                    
+                    self.performSegue(withIdentifier: "updateSegue", sender: nil)
                 }
             })
             
@@ -83,6 +87,9 @@ class LoginViewController: UIViewController {
                                           self.errorLabel.text = errorMessage
                                       } else {
                                       print("Login successful")
+                            
+                             // updateSegue if the siginup is succesful
+                            self.performSegue(withIdentifier: "updateSegue", sender: nil)
                                       }
                     }
                     
@@ -92,6 +99,14 @@ class LoginViewController: UIViewController {
            
         }
         
+    }
+    
+    // upload the profile and chose pag if the custmer is alrady registered or sign up
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if PFUser.current() != nil {
+         self.performSegue(withIdentifier: "updateSegue", sender: nil)
+        }
     }
 
     @IBAction func changeLoginSignUpTapped(_ sender: Any) {
