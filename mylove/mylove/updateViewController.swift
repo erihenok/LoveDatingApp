@@ -26,7 +26,7 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // Do any additional setup after loading the view.
         
         errorLabel.isHidden = true
@@ -45,7 +45,7 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
         }
         
         if let photo = PFUser.current()?["photo"] as? PFFileObject {
-
+            
             photo.getDataInBackground(block: { (data,error) in
                 
                 if let imageData = data {
@@ -100,24 +100,24 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
                 PFUser.current()? .saveInBackground(block: { (success, error) in
                     
                     if error != nil {
-                                    
-                                     var errorMessage = "up date-filled please try again"
-                                     
-                                     if let newError = error as NSError? {
-                                         
-                                         if let detailError = newError.userInfo["error"]as? String{
-                                             
-                                             errorMessage = detailError
-                                         }
-                                     }
-                                     self.errorLabel.isHidden = false
-                                     self.errorLabel.text = errorMessage
-                                 } else {
                         
-                                 print("update successful")
-                                 }
-                    })
-                }
+                        var errorMessage = "up date-filled please try again"
+                        
+                        if let newError = error as NSError? {
+                            
+                            if let detailError = newError.userInfo["error"]as? String{
+                                
+                                errorMessage = detailError
+                            }
+                        }
+                        self.errorLabel.isHidden = false
+                        self.errorLabel.text = errorMessage
+                    } else {
+                        
+                        print("update successful")
+                    }
+                })
+            }
             
         }
     }

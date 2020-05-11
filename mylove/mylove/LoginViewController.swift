@@ -101,7 +101,7 @@ class LoginViewController: UIViewController {
         
     }
     
-    // upload the profile and chose pag if the custmer is alrady registered or sign up
+    // upload the profile and chose page if the custmer is alrady registered or sign up
     override func viewDidAppear(_ animated: Bool) {
         
         if PFUser.current() != nil {
