@@ -24,6 +24,8 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
     
     @IBOutlet weak var errorLabel: UILabel!
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -57,8 +59,47 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
                 
             })
         }
+        
     }
+    // use to uploead a lot of womes images
     
+    
+    
+    func createWomen() {
+        
+        let imageUrls = ["https://www.pinclipart.com/picdir/big/58-589668_tgif-funny-fix-for-december-12-los-simpsons.png",
+                         "https://www.deviantart.com/dinoradar/art/Bart-Simpson-TG-334938423?comment=1%3A334938423%3A4745644149",
+                         "https://www.deviantart.com/nice-ass91/art/Bart-Simpson-Returns-as-a-Bimbo-755133291"]
+        
+        var counter = 0
+        
+        for imageUrl in imageUrls {
+            counter += 1
+            if let url = URL(string: imageUrl){
+                
+                if let data = try? Data(contentsOf: url){
+                    let imageFile = PFFileObject(name: "photo.png", data: data)
+                    
+                    let user = PFUser()
+                    user["photo"] = imageFile
+                    user.username = String(counter)
+                    user.password = "abc123"
+                    user["isFemale"] = true
+                    user["isIntrestedInWomen"] = false
+                    
+                    
+                    user.signUpInBackground(block: {(success, error) in
+                        
+                        
+                        if success {
+                            print("women users created")
+                        }
+                    })
+                }
+            }
+        }
+        
+    }
     // the two actions upoadte image and update buttons
     
     @IBAction func updateImageTapped(_ sender: Any) {
@@ -115,6 +156,8 @@ class updateViewController: UIViewController, UINavigationControllerDelegate, UI
                     } else {
                         
                         print("update successful")
+                        
+                        self.performSegue(withIdentifier: "updateToSwipeSegue", sender: nil)
                     }
                 })
             }

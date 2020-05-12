@@ -10,7 +10,7 @@ import UIKit
 import Parse
 
 class LoginViewController: UIViewController {
-
+    
     @IBOutlet weak var errorLabel: UILabel!
     
     @IBOutlet weak var usernameTextFiled: UITextField!
@@ -25,7 +25,7 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         // this is the error message for the first time
         
         errorLabel.isHidden = true
@@ -42,7 +42,7 @@ class LoginViewController: UIViewController {
             
             user.signUpInBackground(block: {(success, error) in
                 if error != nil {
-                   
+                    
                     var errorMessage = "sigin up filled try again"
                     
                     if let newError = error as NSError? {
@@ -55,7 +55,7 @@ class LoginViewController: UIViewController {
                     self.errorLabel.isHidden = false
                     self.errorLabel.text = errorMessage
                 } else {
-                print("sign up successful")
+                    print("sign up successful")
                     
                     // updateSegue if the siginup is succesful
                     
@@ -73,42 +73,52 @@ class LoginViewController: UIViewController {
                         
                         
                         if error != nil {
-                                         
-                                          var errorMessage = "Login filled try again"
-                                          
-                                          if let newError = error as NSError? {
-                                              
-                                              if let detailError = newError.userInfo["error"]as? String{
-                                                  
-                                                  errorMessage = detailError
-                                              }
-                                          }
-                                          self.errorLabel.isHidden = false
-                                          self.errorLabel.text = errorMessage
-                                      } else {
-                                      print("Login successful")
                             
-                             // updateSegue if the siginup is succesful
-                            self.performSegue(withIdentifier: "updateSegue", sender: nil)
-                                      }
+                            var errorMessage = "Login filled try again"
+                            
+                            if let newError = error as NSError? {
+                                
+                                if let detailError = newError.userInfo["error"]as? String{
+                                    
+                                    errorMessage = detailError
+                                }
+                            }
+                            self.errorLabel.isHidden = false
+                            self.errorLabel.text = errorMessage
+                        } else {
+                            print("Login successful")
+                            
+                            if  user?["isFemale"] != nil {
+                                           self.performSegue(withIdentifier: "loginToSwipingSegue", sender: nil)
+                                       } else {
+                                           self.performSegue(withIdentifier: "updateSegue", sender: nil)
+                                       }
+                            
+                            // updateSegue if the siginup is succesful
+//                            self.performSegue(withIdentifier: "updateSegue", sender: nil)
+                        }
                     }
                     
                 }
             }
             
-           
+            
         }
         
     }
     
     // upload the profile and chose page if the custmer is alrady registered or sign up
     override func viewDidAppear(_ animated: Bool) {
-        
         if PFUser.current() != nil {
-         self.performSegue(withIdentifier: "updateSegue", sender: nil)
+            
+            if  PFUser.current()? ["isFemale"] != nil {
+                self.performSegue(withIdentifier: "loginToSwipingSegue", sender: nil)
+            } else {
+                self.performSegue(withIdentifier: "updateSegue", sender: nil)
+            }
         }
     }
-
+    
     @IBAction func changeLoginSignUpTapped(_ sender: Any) {
         
         if siginUPMode {
@@ -119,7 +129,7 @@ class LoginViewController: UIViewController {
             
             logInSignUpButton.setTitle("sign Up" , for: .normal)
             changeLoginSiginUpButton.setTitle("Log In" , for: .normal)
-             siginUPMode = true
+            siginUPMode = true
         }
         
     }
