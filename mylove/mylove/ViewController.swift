@@ -27,13 +27,26 @@ class ViewController: UIViewController {
         matchimageView.addGestureRecognizer(gesture)
         
         updateImage()
+        
+        PFGeoPoint.geoPointForCurrentLocation { (geoPoint, error) in
+            if let point = geoPoint {
+                PFUser.current()?["location"] = point
+                PFUser.current()?.saveInBackground()
+            }
+            
+            
+        }
     }
     // logout sugue
+    
+    //    @IBAction func logoutTapped(_ sender: Any)
+    
     
     @IBAction func logoutTapped(_ sender: Any) {
         PFUser.logOut()
         performSegue(withIdentifier: "logoutSegue", sender: nil)
     }
+    
     @objc func wasDragged (gestureRecocnizer: UIPanGestureRecognizer) {
         let labelPoint = gestureRecocnizer.translation(in: view)
         matchimageView.center = CGPoint(x: view.bounds.width / 2 + labelPoint.x, y: view.bounds.height / 2 + labelPoint.y)
@@ -76,7 +89,7 @@ class ViewController: UIViewController {
                         }
                     })
                 }
-                               
+                
             }
             rotation = CGAffineTransform(rotationAngle: 0)
             
@@ -111,10 +124,18 @@ class ViewController: UIViewController {
             }
             
             if let rejectedUsers = PFUser.current()?["rejected"] as? [String] {
-                           ignoreUsers += rejectedUsers 
-                       }
+                ignoreUsers += rejectedUsers
+            }
             
+            // query for the location longtued and alltitued
             
+            query.whereKey("objectId", notContainedIn: ignoreUsers)
+            if let geoPoint = PFUser.current()?["location"] as? PFGeoPoint {
+                
+                query.whereKey("location", withinGeoBoxFromSouthwest: PFGeoPoint(latitude: geoPoint.latitude - 1, longitude: geoPoint.longitude - 1), toNortheast: PFGeoPoint(latitude: geoPoint.latitude + 1, longitude: geoPoint.longitude + 1))
+                
+                
+            }
             
             
             query.limit = 1
@@ -132,8 +153,9 @@ class ViewController: UIViewController {
                                         self.matchimageView.image = UIImage(data: imageData)
                                         if let objectID = object.objectId {
                                             self.displayUserID = objectID
+                                       
                                         }
-                                      
+                                        
                                     }
                                 })
                             }
